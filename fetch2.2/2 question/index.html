@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    
+    #p1{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: blue;
+        }
+        #div{
+            
+            height:300px;
+            width:230px;
+            color:blueviolet;
+            background-color:blue;
+            padding:60px;
+            border:1px green;
+            
+        }
+        #p2{
+           display:flex;
+           height:230px;
+           line-height: 4px;
+           margin-top:60px;
+           margin: auto;
+           justify-content: space-between;
+            
+      }
+        #p2>div{
+            width:10%;
+            margin-right: 10px;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            padding:10px;
+            border:1px solid brown
+        }
+       
+    </style>
+
+</head>
+<body>
+    <input type="text" id="city">
+    <button onclick="getdata()">submit</button>
+    <div id="p1"></div>
+    <div id="p2"></div>
+</body>
+</html>
+
+
+<script>
+    
+
+ 
+var data;
+async function getdata(){
+   try {
+    
+        let city=document.getElementById("city").value;
+
+        let res= await fetch (`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=36fb7d8a27efe82859e0eef27b1b6814&units=metric`);
+       
+       let data=await res.json();
+        console.log("data",data);
+        
+        let url2=`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&dt=${data.dt}&appid=36fb7d8a27efe82859e0eef27b1b6814&units=metric`
+        let res2=await fetch(url2)
+        let data2=await res2.json();
+    
+        console.log("data2",data2)
+        sevendaysData(data2)
+    }
+    catch(err){
+        console.log("err:",err)
+
+    }
+}
+ 
+ 
+function sevendaysData(data2){
+    document.getElementById("p2").innerHTML=null;
+    data2.daily.forEach(function(elem){
+        var div=document.createElement("div");
+        
+        var days=document.createElement("h3");
+        days.innerText=`${(elem.dt *1000)}`
+        console.log("Days:",days.innerText);
+
+        var icon=document.createElement("img");
+        icon.src=`http://openweathermap.org/img/wn/${elem.weather[0].icon}@2x.png`
+        console.log("icon:",icon);
+
+
+        var day=document.createElement("h4");
+        day.innerText=`Day:${elem.temp.day.toFixed(0)}°C`
+
+        
+        var night=document.createElement("h4");
+        night.innerText=`Night:${elem.temp.night.toFixed(0)}°C`;
+
+        div.append(days,icon,day,night);
+        document.getElementById("p2").append(div);
+    })
+}
+    
+</script>
